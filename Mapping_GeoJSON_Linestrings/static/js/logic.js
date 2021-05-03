@@ -8,7 +8,7 @@
 let streets = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
-    id: 'mapbox/streets-v11',
+    id: 'mapbox/light-v10',
     tileSize: 512,
     zoomOffset: -1,
     accessToken: API_KEY
@@ -27,20 +27,24 @@ attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap
 
 // Create a base layer that holds both maps.
 let baseMaps = {
-    Street: streets,
-    Dark: dark
+    "Day Navigation": streets,
+    "Night Navigation": dark
   };
 
 
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
-    center: [30, 30],
+    center: [44.0, -80.0],
     zoom: 2,
     layers: [streets]
 })
 
 // Pass our map layers into our layers control and add the layers control to the map.
 L.control.layers(baseMaps).addTo(map);
+
+// Accessing the Toronto airline routes GeoJSON URL.
+let torontoData = "https://raw.githubusercontent.com/CS50Hsinyu/Mapping_Earthquakes/main/Mapping_GeoJSON_Points/torontoRoutes.json";
+
 
 
 // Accessing the airport GeoJSON URL
@@ -99,13 +103,29 @@ let airportData = "https://raw.githubusercontent.com/CS50Hsinyu/Mapping_Earthqua
 
 
 // Grabbing our GeoJSON data.
-d3.json(airportData).then(function(data) {
-    console.log(data);
+//d3.json(airportData).then(function(data) {
+//    console.log(data);
   // Creating a GeoJSON layer with the retrieved data.
   // add a popup marker that displays all airports' codes and names.
-  L.geoJson(data,{
-    onEachFeature: function(feature, layer) {
-        layer.bindPopup("<h2>Airport code: " + feature.properties.faa + "</h2><hr><h2>Airport name: "+feature.properties.name+"</h2>");  
+//  L.geoJson(data,{
+//    onEachFeature: function(feature, layer) {
+//        layer.bindPopup("<h2>Airport code: " + feature.properties.faa + "</h2><hr><h2>Airport name: "+feature.properties.name+"</h2>");  
+//    }
+//  }).addTo(map);
+//});
+
+
+
+
+// Grabbing our GeoJSON data.
+d3.json(torontoData).then(function(data) {
+  console.log(data);
+// Creating a GeoJSON layer with the retrieved data.
+L.geoJson(data,{
+    color:"#ffffa1",
+    weightL2,
+    onEachFeature:function(feature,layer){
+      layer.bindPopup("<h2>Airport line: " + feature.properties.airline+"</h2><hr><h2>Destination: "+feature.properties.dst+"</h2>")
     }
-  }).addTo(map);
+}).addTo(map);
 });
